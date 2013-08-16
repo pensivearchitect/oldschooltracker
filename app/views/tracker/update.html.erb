@@ -1,0 +1,28 @@
+<% if(params[:name] == nil) %>
+	OMFG YOU FUCKING SPASTIC WRONG NAME NIGGER
+<% else %>
+	Time <%= Time.now.to_i %><br/>
+	Name <%= @namemap.name %><br/>
+	PID <%= @namemap.id %><br/>
+	namemap <%= @namemap.inspect %>
+	<table>
+		<tr>
+			<td>Skill Name</td>
+			<td>XP</td>
+			<td>Rank</td>
+		</tr>
+	<% 0.upto 23 do |i| %>
+		<tr>
+			<td>
+				<%= get_skill_name i %>
+			</td>
+			<td>
+				<%= @xp[i] %>
+			</td>
+			<td>
+				<%= @ranks[i] %>
+			</td>
+		</tr>
+	<% end %>
+	</table>
+<% end %>

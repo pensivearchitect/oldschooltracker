@@ -1,0 +1,12 @@
+<h3>Displaying all name mappings: </h3>
+<% @namemappings.each do |item| %>
+<%= item.id %> = <%= item.name %><br/>
+<% end %>
+
+<h3>Displaying all data points: </h3>
+<% @datapoints.each do |item| %>
+PID <%= item.pid %><br/>
+Time <%= time_to_string(Time.now.to_i - item.created_at.to_i) %> ago<br/>
+XP <%= item.xp %><br/>
+Rank <%= item.rank %><br/><br/>
+<% end %>
