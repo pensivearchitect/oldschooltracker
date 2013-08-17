@@ -11,21 +11,7 @@ class TrackerController < ApplicationController
     @title = "Update " << params[:name]
 
     begin
-      contents = open('http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=' << NameMappings.get_player_name(params[:name])) { |io| io.read }
-      @xp = Array.new(24)
-      @ranks = Array.new(24)
-      skillarr = contents.split /\r?\n/
-
-      @xphex = ""
-      @rankhex = ""
-
-      0.upto 23 do |i|
-        skillarr[i] = skillarr[i].split(',')
-        @ranks[i] = skillarr[i][0].to_i
-        @xp[i] = skillarr[i][2].to_i
-        @xphex << @xp[i].to_s(16).rjust(8, '0')
-        @rankhex << @ranks[i].to_s(16).rjust(8, '0')
-      end
+      get_current_stats params[:name]
 
       @namemap = NameMappings.find_by_name(params[:name])
       if(@namemap == nil)
