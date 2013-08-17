@@ -1,6 +1,6 @@
 <h3>Displaying all name mappings: </h3>
 <% @namemappings.each do |item| %>
-<%= item.id %> = <%= item.name %><br/>
+<%= item.id %> = <%= link_to item.name, track_path(item.name, 0, 86400) %><br/>
 <% end %>
 
 <h3>Displaying all data points: </h3>
