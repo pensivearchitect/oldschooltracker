@@ -1,0 +1,38 @@
+<% if @namemap.nil? %>
+	The name <%= params[:name] %> is not in the database.
+<% else %>
+	<% if @datapoints.length == 0 %>
+		There is no data for this player within this time period.
+	<% else %>
+		Tracking <%= @namemap.name %>
+		<h3>
+			Displaying all data points for <%= @namemap.name %> within the last <%= time_to_string(@time) %>:
+		</h3>
+		<table>
+			<tr>
+				<td>
+					Skill
+				</td>
+				<td>
+					XP
+				</td>
+				<td>
+					Rank
+				</td>
+			</tr>
+		<% 0.upto 23 do |i| %>
+			<tr>
+				<td>
+					<%= get_skill_name i %> 
+				</td>
+				<td>
+					<%= @datapoints[-1].xp[i*8,8].hex - @datapoints[0].xp[i*8,8].hex %>
+				</td>
+				<td>
+					<%= @datapoints[-1].rank[i*8,8].hex - @datapoints[0].rank[i*8,8].hex %>
+				</td>
+			<tr>
+		<% end %>
+		</table>
+	<% end %>
+<% end %>

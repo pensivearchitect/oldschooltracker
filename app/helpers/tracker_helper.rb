@@ -1,53 +1,5 @@
 module TrackerHelper
-  require 'open-uri'
-
-  class Player
-    def initialize name
-        @name = get_player_name name
-      begin
-        contents = open('http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=' << @name) { |io| io.read }
-        @xp = Array.new(24)
-        @ranks = Array.new(24)
-        skillarr = contents.split /\r?\n/
-
-        @xphex = ""
-        @rankhex = ""
-
-         0.upto 23 do |i|
-          skillarr[i] = skillarr[i].split(',')
-          @ranks[i] = skillarr[i][0].to_i
-          @xp[i] = skillarr[i][2].to_i
-          @xphex << @xp[i].to_s(16).rjust(8, '0')
-          @rankhex << @ranks[i].to_s(16).rjust(8, '0')
-        end
-      rescue OpenURI::HTTPError
-        @name = nil
-      end
-    end
-
-    def name
-      return @name
-    end
-
-    def xp_hex
-      return @xphex
-    end
-
-    def rank_hex
-      return @rankhex
-    end
-
-    def get_xp skill
-      return @xp[skill]
-    end
-
-    def get_rank skill
-      return @ranks[skill]
-    end
-  end
-  
   def get_skill_name i
-    
     return @@skills[i]
   end
 

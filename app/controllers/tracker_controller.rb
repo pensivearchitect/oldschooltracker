@@ -1,5 +1,7 @@
 class TrackerController < ApplicationController
   include TrackerHelper
+  require 'open-uri'
+
   def index
     @namemappings = NameMappings.all
     @datapoints = DataPoint.all
@@ -9,7 +11,7 @@ class TrackerController < ApplicationController
     @title = "Update " << params[:name]
 
     begin
-      contents = open('http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=' << get_player_name(params[:name])) { |io| io.read }
+      contents = open('http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=' << NameMappings.get_player_name(params[:name])) { |io| io.read }
       @xp = Array.new(24)
       @ranks = Array.new(24)
       skillarr = contents.split /\r?\n/
@@ -24,11 +26,7 @@ class TrackerController < ApplicationController
         @xphex << @xp[i].to_s(16).rjust(8, '0')
         @rankhex << @ranks[i].to_s(16).rjust(8, '0')
       end
-    rescue OpenURI::HTTPError
-      params[:name] = nil
-    end
 
-    if(params[:name] != nil)
       @namemap = NameMappings.find_by_name(params[:name])
       if(@namemap == nil)
         @namemap = NameMappings.new(params.permit(:name))
@@ -37,6 +35,19 @@ class TrackerController < ApplicationController
 
       @dp = DataPoint.new(:pid => @namemap.id, :time => Time.now.to_i, :xp => @xphex, :rank => @rankhex)
       @dp.save
+    rescue OpenURI::HTTPError
+      params[:name] = nil
+    end
+  end
+
+  def track
+    @time = (params[:time] == nil ? 86400 : params[:time].to_i)
+    @skill = get_skill(params[:skill] == nil ? 0 : params[:skill].to_i)
+
+    @namemap = NameMappings.find_by_name(params[:name])
+    if(@namemap != nil)
+      @datapoints = DataPoint.where(pid: @namemap.id).where(updated_at: (Time.now - @time)..Time.now)
+
     end
   end
 
