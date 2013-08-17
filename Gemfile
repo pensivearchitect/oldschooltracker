@@ -4,7 +4,7 @@
 gem 'rails', '4.0.0'
 
 # Use puma as replacement for rack
-gem 'puma'
+# gem 'puma'
 
 # Use slim as the templating engine instead of erb
 gem 'slim-rails'

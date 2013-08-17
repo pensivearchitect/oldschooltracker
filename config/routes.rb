@@ -11,6 +11,9 @@ Myapp::Application.routes.draw do
 
 
   get 'tracker/update/:name', to: 'tracker#update'
+  get 'tracker/track/:name(/:skill)(/:time)', to: 'tracker#track'
+
+
   get 'tracker/pidtoname/:pid', to: 'tracker#pidtoname'
   get 'tracker/nametopid/:name', to: 'tracker#nametopid'
   get 'tracker/formatname/:name', to: 'tracker#formatname'

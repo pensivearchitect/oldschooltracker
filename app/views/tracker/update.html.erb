@@ -1,6 +1,7 @@
-<% if(params[:name] == nil) %>
-	OMFG YOU FUCKING SPASTIC WRONG NAME NIGGER
+<% if(@namemap == nil) %>
+	This player is not on the Old School RuneScape hiscores.
 <% else %>
+	<%= link_to 'Track', track_path(@namemap.name, 0, 86400) %><br/>
 	Time <%= Time.now.to_i %><br/>
 	Name <%= @namemap.name %><br/>
 	PID <%= @namemap.id %><br/>

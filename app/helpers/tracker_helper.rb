@@ -1,53 +1,9 @@
 module TrackerHelper
-  require 'open-uri'
-
-  class Player
-    def initialize name
-        @name = get_player_name name
-      begin
-        contents = open('http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=' << @name) { |io| io.read }
-        @xp = Array.new(24)
-        @ranks = Array.new(24)
-        skillarr = contents.split /\r?\n/
-
-        @xphex = ""
-        @rankhex = ""
-
-         0.upto 23 do |i|
-          skillarr[i] = skillarr[i].split(',')
-          @ranks[i] = skillarr[i][0].to_i
-          @xp[i] = skillarr[i][2].to_i
-          @xphex << @xp[i].to_s(16).rjust(8, '0')
-          @rankhex << @ranks[i].to_s(16).rjust(8, '0')
-        end
-      rescue OpenURI::HTTPError
-        @name = nil
-      end
-    end
-
-    def name
-      return @name
-    end
-
-    def xp_hex
-      return @xphex
-    end
-
-    def rank_hex
-      return @rankhex
-    end
-
-    def get_xp skill
-      return @xp[skill]
-    end
-
-    def get_rank skill
-      return @ranks[skill]
-    end
+  def cap_words str
+    str.split(' ').map {|w| w.capitalize }.join(' ')
   end
-  
+
   def get_skill_name i
-    
     return @@skills[i]
   end
 
@@ -69,8 +25,25 @@ module TrackerHelper
     item_array.each_with_index do |item, i|
       ret << item << (item_array.length - 1 == i ? "" : ", ") << (item_array.length - 2 == i ? "and " : "")
     end
-
     return ret
+  end
+
+  def get_current_stats player_name
+      contents = open('http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=' << NameMappings.get_player_name(player_name)) { |io| io.read }
+      @xp = Array.new(24)
+      @ranks = Array.new(24)
+      skillarr = contents.split /\r?\n/
+
+      @xphex = ""
+      @rankhex = ""
+
+      0.upto 23 do |i|
+        skillarr[i] = skillarr[i].split(',')
+        @ranks[i] = skillarr[i][0].to_i
+        @xp[i] = skillarr[i][2].to_i
+        @xphex << @xp[i].to_s(16).rjust(8, '0')
+        @rankhex << @ranks[i].to_s(16).rjust(8, '0')
+      end
   end
 
 
@@ -148,10 +121,25 @@ module TrackerHelper
   end
 
   def get_icon_url( skill )
-    if(skill == 0)
-      return "ico/99.gif"
+      return "/ico/" + (skill).to_s + ".gif"
+  end
+
+  def track_path( name, skill, time )
+    return ('/tracker/track/' << name << '/' << skill.to_s << '/' << time.to_s)
+  end
+
+  def display_name player_name
+    return cap_words player_name.gsub("_"," ")
+  end
+
+  def color_number i
+    if i > 0
+      return "<span class='positive'>+" << i.to_s << "</span>"
+    elsif i < 0
+      return "<span class='negative'>" << i.to_s << "</span>"
     else
-      return "ico/" + (skill-1).to_s + ".gif"
+      return "0"
     end
+
   end
 end
