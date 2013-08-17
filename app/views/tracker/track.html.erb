@@ -1,7 +1,7 @@
 <% if @namemap.nil? %>
 The name <%= params[:name] %> is not in the database.
 <% else %>
-<% if @datapoints.length == 0 %>
+<% if @datapoints.empty? %>
 There is no data for this player within this time period.
 <% else %>
 Tracking <%= @namemap.name %>
@@ -23,6 +23,7 @@ Tracking <%= @namemap.name %>
 <% 0.upto 23 do |i| %>
 	<tr>
 		<td>
+			<%= image_tag get_icon_url i  %>
 			<%= i == @skill ? '>' << get_skill_name(i) : link_to(get_skill_name(i), track_path(@namemap.name, i, @time)) %>
 		</td>
 		<td>
@@ -31,9 +32,10 @@ Tracking <%= @namemap.name %>
 		<td>
 			<%= @datapoints[-1].rank[i*8,8].hex - @datapoints[0].rank[i*8,8].hex %>
 		</td>
-	<tr>
+	</tr>
 <% end %>
 </table>
+<br/><%= get_skill_name @skill %> graphs:<br/><br/>
 <script type='text/javascript' src='https://www.google.com/jsapi'></script>
 <script type='text/javascript'>
 google.load('visualization', '1', {packages:['corechart']});

@@ -117,11 +117,7 @@ module TrackerHelper
   end
 
   def get_icon_url( skill )
-    if(skill == 0)
-      return "ico/99.gif"
-    else
-      return "ico/" + (skill-1).to_s + ".gif"
-    end
+      return "ico/" + (skill).to_s + ".gif"
   end
 
   def track_path( name, skill, time )
