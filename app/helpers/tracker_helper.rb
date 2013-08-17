@@ -131,4 +131,15 @@ module TrackerHelper
   def display_name player_name
     return cap_words player_name.gsub("_"," ")
   end
+
+  def color_number i
+    if i > 0
+      return "<span class='positive'>+" << i.to_s << "</span>"
+    elsif i < 0
+      return "<span class='negative'>" << i.to_s << "</span>"
+    else
+      return "0"
+    end
+
+  end
 end

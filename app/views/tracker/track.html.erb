@@ -31,10 +31,10 @@ Earliest data point within this time period: <%= time_to_string(Time.now.to_i-@d
 			<%= i == @skill ? '>' << get_skill_name(i) : link_to(get_skill_name(i), track_path(@namemap.name, i, @time)) %>
 		</td>
 		<td>
-			<%= @datapoints[-1].xp[i*8,8].hex - @datapoints[0].xp[i*8,8].hex %>
+			<%=raw color_number(@datapoints[-1].xp[i*8,8].hex - @datapoints[0].xp[i*8,8].hex) %>
 		</td>
 		<td>
-			<%= @datapoints[-1].rank[i*8,8].hex - @datapoints[0].rank[i*8,8].hex %>
+			<%=raw color_number(@datapoints[0].rank[i*8,8].hex - @datapoints[-1].rank[i*8,8].hex) %>
 		</td>
 	</tr>
 <% end %>
