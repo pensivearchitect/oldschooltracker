@@ -2,4 +2,4 @@
 
 ##Todo
 
-(Importan stuff here)
+(Important stuff here)
