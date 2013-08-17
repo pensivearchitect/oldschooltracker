@@ -123,4 +123,8 @@ module TrackerHelper
       return "ico/" + (skill-1).to_s + ".gif"
     end
   end
+
+  def track_path( name, skill, time )
+    return ('/tracker/track/' << name << '/' << skill.to_s << '/' << time.to_s)
+  end
 end

@@ -33,7 +33,6 @@ class TrackerController < ApplicationController
     @namemap = NameMappings.find_by_name(params[:name])
     if(@namemap != nil)
       @datapoints = DataPoint.where(pid: @namemap.id).where(updated_at: (Time.now - @time)..Time.now)
-
     end
   end
 

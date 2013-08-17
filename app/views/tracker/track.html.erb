@@ -1,38 +1,137 @@
 <% if @namemap.nil? %>
-	The name <%= params[:name] %> is not in the database.
+The name <%= params[:name] %> is not in the database.
 <% else %>
-	<% if @datapoints.length == 0 %>
-		There is no data for this player within this time period.
-	<% else %>
-		Tracking <%= @namemap.name %>
-		<h3>
-			Displaying all data points for <%= @namemap.name %> within the last <%= time_to_string(@time) %>:
-		</h3>
-		<table>
-			<tr>
-				<td>
-					Skill
-				</td>
-				<td>
-					XP
-				</td>
-				<td>
-					Rank
-				</td>
-			</tr>
-		<% 0.upto 23 do |i| %>
-			<tr>
-				<td>
-					<%= get_skill_name i %> 
-				</td>
-				<td>
-					<%= @datapoints[-1].xp[i*8,8].hex - @datapoints[0].xp[i*8,8].hex %>
-				</td>
-				<td>
-					<%= @datapoints[-1].rank[i*8,8].hex - @datapoints[0].rank[i*8,8].hex %>
-				</td>
-			<tr>
-		<% end %>
-		</table>
+<% if @datapoints.length == 0 %>
+There is no data for this player within this time period.
+<% else %>
+Tracking <%= @namemap.name %>
+<h3>
+	Displaying all data points for <%= @namemap.name %> within the last <%= time_to_string(@time) %>:
+</h3>
+<table>
+	<tr>
+		<td>
+			Skill
+		</td>
+		<td>
+			XP
+		</td>
+		<td>
+			Rank
+		</td>
+	</tr>
+<% 0.upto 23 do |i| %>
+	<tr>
+		<td>
+			<%= i == @skill ? '>' << get_skill_name(i) : link_to(get_skill_name(i), track_path(@namemap.name, i, @time)) %>
+		</td>
+		<td>
+			<%= @datapoints[-1].xp[i*8,8].hex - @datapoints[0].xp[i*8,8].hex %>
+		</td>
+		<td>
+			<%= @datapoints[-1].rank[i*8,8].hex - @datapoints[0].rank[i*8,8].hex %>
+		</td>
+	<tr>
+<% end %>
+</table>
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+<script type='text/javascript'>
+google.load('visualization', '1', {packages:['corechart']});
+google.setOnLoadCallback(drawChart);
+function drawChart() {
+	var xpdata = new google.visualization.DataTable();
+	xpdata.addColumn('date', 'Date');
+	xpdata.addColumn('number', 'XP');
+	xpdata.addColumn({type:'string', role:'tooltip', p: { html: true }});
+	 
+	var rankdata = new google.visualization.DataTable();
+	rankdata.addColumn('date', 'Date');
+	rankdata.addColumn('number', 'Rank');
+	rankdata.addColumn({type:'string', role:'tooltip', p: { html: true }});
+	
+	var lvldata = new google.visualization.DataTable();
+	lvldata.addColumn('date', 'Date');
+	lvldata.addColumn('number', 'Level');
+	lvldata.addColumn({type:'string', role:'tooltip', p: { html: true }});
+	function ISODateString(d) {
+	   function pad(n) {
+			return n < 10 ? '0' + n : n;
+		
+		}
+
+		return pad(d.getHours()) + ':'
+			+ pad(d.getMinutes()) + ':'
+			+ pad(d.getSeconds()) + ' '
+			+ pad(d.getDate()) + "/"
+			+ pad(d.getMonth() + 1) + "/"
+			+ pad(d.getFullYear());
+	}
+
+	function makeRows(timestamp, xp, lvl, rank) {
+		var d    = new Date(timestamp),
+		   dstr = "<span class='tooltip'><strong>"
+			+ ISODateString(d) + "</strong><br>",
+		   dend = "</span>";
+
+		var xprow   = [d, xp,   dstr + "XP : "    + xp   + dend],
+			lvlrow  = [d, lvl,  dstr + "Level : " + lvl  + dend],
+			rankrow = [d, rank, dstr + "Rank : "  + rank + dend];
+
+		if (xp   != null) xpdata.addRow(xprow);
+		if (lvl  != null) lvldata.addRow(lvlrow);
+		if (rank != null) rankdata.addRow(rankrow);
+	}
+
+	<% @datapoints.each do |item| %>
+	makeRows(<%= item.created_at.to_i %>000,<%= item.xp[@skill*8,8].hex %>,0,<%= item.rank[@skill*8,8].hex %>);
 	<% end %>
+
+	var xpoptions = {
+	  title: '<%= get_skill_name @skill %> XP (<%= time_to_string @time %>)',
+	  backgroundColor: 'ededed',
+	  tooltip: { isHtml: true },
+	  chartArea: {
+			left: 90,
+			height: '75%',
+			width: '75%'
+		},
+		legend: { position: 'none' }
+	};
+	var xpchart = new google.visualization.LineChart(document.getElementById('xpgraph'));
+	xpchart.draw(xpdata, xpoptions);
+	
+	var lvloptions = {
+		title: '<%= get_skill_name @skill %> Levels (<%= time_to_string @time %>)',
+		backgroundColor: 'ededed',
+		tooltip: { isHtml: true },
+		chartArea: {
+			left: 90,
+			height: '75%',
+			width: '75%'
+		},
+		legend: { position: 'none' }
+	};
+	var lvlchart = new google.visualization.LineChart(document.getElementById('lvlgraph'));
+	lvlchart.draw(lvldata, lvloptions);
+	
+	var rankoptions = {
+		vAxis: {direction: -1},
+		title: '<%= get_skill_name @skill %> Ranks (<%= time_to_string @time %>)',
+		backgroundColor: 'ededed',
+		tooltip: { isHtml: true },
+		chartArea: {
+			left: 90,
+			height: '75%',
+			width: '75%'
+		},
+		legend: { position: 'none' }
+	};
+	var rankchart = new google.visualization.LineChart(document.getElementById('rankgraph'));
+	rankchart.draw(rankdata,rankoptions);
+}
+</script>
+<div id='xpgraph' style='width: 675px; height: 375px;'></div>
+<div id='rankgraph' style='width: 675px; height: 375px;'></div>
+<div id='lvlgraph' style='width: 675px; height: 375px;'></div>
+<% end %>
 <% end %>
