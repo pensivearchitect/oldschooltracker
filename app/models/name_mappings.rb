@@ -2,7 +2,7 @@ class NameMappings < ActiveRecord::Base
   before_create :fix_name
 
   def fix_name
-    self.name = get_player_name self.name
+    self.name = NameMappings.get_player_name self.name
   end
 
   def self.get_player_name unsafe_name

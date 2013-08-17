@@ -1,14 +1,16 @@
 <% if @namemap.nil? %>
-The name <%= params[:name] %> is not in the database.
+The name <%= params[:name] %> is not in the database.<br/>
+<%= link_to 'Update', '/tracker/update/' << params[:name] %>
 <% else %>
 <% if @datapoints.empty? %>
-There is no data for this player within this time period.
+There is no data for this player within this time period.<br/>
+<%= link_to 'Update', '/tracker/update/' << @namemap.name %>
 <% else %>
 Tracking <%= @namemap.name %> - <%= link_to 'Update', '/tracker/update/' << @namemap.name %><br/>
 Most recent data point: <%= time_to_string(Time.now.to_i-@datapoints[-1].created_at.to_i) %> ago<br/>
 Earliest data point within this time period: <%= time_to_string(Time.now.to_i-@datapoints[0].created_at.to_i) %> ago<br/>
 <h3>
-	Tracking <%= @namemap.name %> within the last <%= time_to_string(@time) %>:
+	Tracking <%= display_name @namemap.name %> within the last <%= time_to_string(@time) %>:
 </h3>
 <table>
 	<tr>

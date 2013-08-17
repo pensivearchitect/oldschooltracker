@@ -1,4 +1,8 @@
 module TrackerHelper
+  def cap_words str
+    str.split(' ').map {|w| w.capitalize }.join(' ')
+  end
+
   def get_skill_name i
     return @@skills[i]
   end
@@ -117,10 +121,14 @@ module TrackerHelper
   end
 
   def get_icon_url( skill )
-      return "ico/" + (skill).to_s + ".gif"
+      return "/ico/" + (skill).to_s + ".gif"
   end
 
   def track_path( name, skill, time )
     return ('/tracker/track/' << name << '/' << skill.to_s << '/' << time.to_s)
+  end
+
+  def display_name player_name
+    return cap_words player_name.gsub("_"," ")
   end
 end
