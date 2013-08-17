@@ -9,6 +9,9 @@ There is no data for this player within this time period.<br/>
 Tracking <%= @namemap.name %> - <%= link_to 'Update', '/tracker/update/' << @namemap.name %><br/>
 Most recent data point: <%= time_to_string(Time.now.to_i-@datapoints[-1].created_at.to_i) %> ago<br/>
 Earliest data point within this time period: <%= time_to_string(Time.now.to_i-@datapoints[0].created_at.to_i) %> ago<br/>
+<%= @time==86400 ? 'Day' : (link_to 'Day', '/tracker/track/' << @namemap.name << '/' << @skill.to_s << '/86400') %>
+<%= @time==604800 ? 'Week' : (link_to 'Week', '/tracker/track/' << @namemap.name << '/' << @skill.to_s << '/604800') %>
+<%= @time==2678400 ? 'Month' : (link_to 'Month', '/tracker/track/' << @namemap.name << '/' << @skill.to_s << '/2678400') %>
 <h3>
 	Tracking <%= display_name @namemap.name %> within the last <%= time_to_string(@time) %>:
 </h3>
